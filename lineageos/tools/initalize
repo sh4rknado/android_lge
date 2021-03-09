@@ -1,0 +1,15 @@
+#!/bin/bash
+
+mkdir -pv ../system
+cd ../system
+repo init -u https://github.com/LineageOS/android.git -b lineage-17.10
+mkdir -pv .repo/local_manifests/
+
+cat << EOF > .repo/local_manifests/local_manifests.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+    <project path="device/lge/hammerhead" name="sh4rknado/android_device_lge_hammerhead" remote="github" revision="lineage-17.1"/>
+    <project path="kernel/lge/hammerhead" name="sh4rknado/android_kernel_lge_hammerhead" remote="github" revision="lineage-17.1"/>
+    <project path="vendor/lge/" name="sh4rknado/android_vendor_lge" remote="github" revision="lineage-17.1"/>
+</manifest>
+EOF

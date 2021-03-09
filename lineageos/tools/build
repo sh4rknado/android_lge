@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd ../system
+
+echo -e "\nLoading Sources\n"
+source build/envsetup.sh
+
+echo -e "\nReset all depots\n"
+croot
+brunch hammerhead

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd system
+
+echo -e "\nLoading Sources\n"
+source build/envsetup.sh
+
+echo -e "\nReset the Build\n"
+mka clean
+mka clobber
+
+echo -e "\nReset the project\n"
+repo forall -c 'git reset --hard ; git clean -fdx' 
+
+echo -e "\nReset all depots\n"
+repo sync -j 16
