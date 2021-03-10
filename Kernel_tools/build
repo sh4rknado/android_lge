@@ -1,0 +1,63 @@
+#!/bin/bash
+
+export ARCH=arm64
+version_ok=0
+
+function choose_version() {
+
+   while [ $version_ok -eq 0 ]; do
+      clear
+      echo
+      echo "Choose your Build Version :"
+      echo "1) Kali_Nethunter Portage"
+      echo "2) Default Exynos Dreamlte (SM-950 F)"
+      echo "3) Default Exynos Dream2lte (SM-G955 F)"
+      read version
+
+      case $version in
+         1 ) cp -avr kali-defconfig .config; version_ok=1; ;;
+         2 ) make -j $Number_processor ARCH=arm64 exynos8895-dreamlte_defconfig; version_ok=1; ;;
+         3 ) make -j $Number_processor ARCH=arm64 exynos8895-dream2lte_defconfig; version_ok=1; ;;
+         * ) echo "Wrong Number !"; ;;
+       esac
+   done
+}
+
+function manual_config() {
+   clear
+   echo
+   echo "Do you want to use menuconfig ?"
+   echo "1) Yes"
+   echo "2) No"
+   read config
+
+   if [ "$config" = 1 ] ; then
+    make menuconfig
+   fi
+}
+
+function build() {
+    clear
+    echo
+    echo "What is the processor number ? (Real not logic)"
+    read Number_processor
+    export ANDROID_MAJOR_VERSION=o
+    make ARCH=arm64 -j $Number_processor
+}
+
+function main() {
+   clear
+   echo
+   echo "Cleanning old build"
+   echo
+   make mrproper -j 2
+
+   sleep 2
+   choose_version
+
+   sleep 2
+   manual_config
+
+   build
+}
+main

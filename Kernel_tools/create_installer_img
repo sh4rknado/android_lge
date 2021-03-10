@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# init Folder User 
+function user_path() {
+
+	echo "Where is the location of original boot.img ?"
+	read path_img
+
+	echo "Where is the path of the compiled Kernel ? (Z-Image)"
+	read compiled_kernel_path
+
+	echo "Where is the location of new boot.img ?"
+	read path_new_img
+}
+
+# recreate new boot.img
+function create_bootimg() {
+
+	figlet SPLIT-BOOTIMG
+	echo
+	split_boot $path_img
+
+	rm -rf boot.img-kernel
+	cp -avr $compiled_kernel_path boot.img-kernel
+
+	figlet UNCOMPRESS
+	echo
+	mkdir ramdisk
+	cd ramdisk
+	gzip -dc ../boot.img-ramdisk.gz | cpio -i
+	cd ..
+
+	figlet COMPRESS
+	echo
+	find . | cpio -o -H newc | gzip > ../newramdisk.cpio.gz
+
+	echo
+	figlet NEW BOOTIMG
+	mkbootimg --kernel "boot.img-kernel" --ramdisk "ramdisk" --output $path_new_img
+
+	echo
+	figlet CLEANNING
+	rm -rf ramdisk
+	rm -rf boot.img-ramdisk.gz
+	rm -rf boot.img-kernel
+}
+
+function main() {
+
+	user_path
+	create_bootimg
+}
+
+main
